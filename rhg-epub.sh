@@ -35,10 +35,10 @@ echo 'Compile all HTML'
 
 echo 'Adjust stylesheet'
 
-"${script_root}/rhg-css.rb" rhg.css > rhg_epub.css
+"${script_root}/rhg-css.rb" rhg.css > rhg-epub.css
 
 
 echo 'Convert to EPUB'
 
-pandoc -f html -t epub3 --epub-stylesheet rhg_epub.css -o "${script_root}/RubyHackingGuide.epub" RubyHackingGuide.html
+pandoc -f html -t epub3 --epub-stylesheet rhg-epub.css -o "${script_root}/RubyHackingGuide.epub" RubyHackingGuide.html
 
