@@ -20,7 +20,7 @@ tmpdir=$(mktemp -d "/tmp/rhg-epub.xxxxxx")
 trap "rm -rf ${tmpdir}" exit
 
 # Debug
-#tmpdir='.'
+#tmpdir='tmp'
 
 tar zxf "${tarball}" -C "${tmpdir}"
 
@@ -40,5 +40,19 @@ echo 'Adjust stylesheet'
 
 echo 'Convert to EPUB'
 
-pandoc -f html -t epub3 --epub-stylesheet rhg-epub.css -o "${script_root}/RubyHackingGuide.epub" RubyHackingGuide.html
+pandoc -f html -t epub3 --epub-stylesheet rhg-epub.css -o '../tmp.epub' RubyHackingGuide.html
+
+
+echo 'Convert footnote'
+
+cd "${script_root}"
+mkdir "${tmpdir}/epub"
+cd "${tmpdir}/epub"
+unzip '../tmp.epub' > /dev/null
+for xhtml in ch*.xhtml; do
+  mv "${xhtml}" "${xhtml}.orig"
+  "${script_root}/rhg-footnote.rb" "${xhtml}.orig" > "${xhtml}"
+  rm "${xhtml}.orig"
+done
+zip -r "${script_root}/RubyHackingGuide.epub" . > /dev/null
 

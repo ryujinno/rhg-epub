@@ -61,10 +61,6 @@ index.scan(%r[<li><a href="(.*?)">(.*?)</a>]) do |filename, title|
     html.sub!(%r[U牙.*?S頏著]){'U牙..S頏著'}
   end
 
-  # Footnote
-  html.gsub!(%r[\\footnote{(.+?)}]m, '（\1）')
-  html.gsub!(%r[@footnote{(.+?)}]m, '（\1）')
-
   # Footer
   html.sub!(%r[<hr>.*]m, '')
 

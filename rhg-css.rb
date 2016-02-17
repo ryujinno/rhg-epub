@@ -40,6 +40,10 @@ stylesheet += <<CSS
 
 dt { font-weight: bold; }
 dd { margin-left: 1em; }
+
+a.noteref {
+  text-decoration: none;
+}
 CSS
 
 puts(stylesheet)
