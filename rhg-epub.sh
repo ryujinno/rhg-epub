@@ -43,16 +43,24 @@ echo 'Convert to EPUB'
 pandoc -f html -t epub3 --epub-stylesheet rhg-epub.css -o '../tmp.epub' RubyHackingGuide.html
 
 
-echo 'Convert footnote'
+echo 'Expand EPUB'
 
 cd "${script_root}"
-mkdir "${tmpdir}/epub"
+mkdir -p "${tmpdir}/epub"
 cd "${tmpdir}/epub"
 unzip '../tmp.epub' > /dev/null
+
+
+echo 'Convert footnote'
+
 for xhtml in ch*.xhtml; do
   mv "${xhtml}" "${xhtml}.orig"
   "${script_root}/rhg-footnote.rb" "${xhtml}.orig" > "${xhtml}"
   rm "${xhtml}.orig"
 done
+
+
+echo 'Compress EPUB'
+
 zip -r "${script_root}/RubyHackingGuide.epub" . > /dev/null
 

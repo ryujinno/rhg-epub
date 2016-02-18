@@ -11,7 +11,7 @@ stylesheet += <<CSS
 .title {
     color:            #fff;
     background-color: #33a;
-    text-align:       left;
+    text-align:       center;
     font-size:        200%;
     margin-top:       0;
     margin-bottom:    1em;
