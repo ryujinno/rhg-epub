@@ -41,8 +41,11 @@ stylesheet += <<CSS
 dt { font-weight: bold; }
 dd { margin-left: 1em; }
 
-a.noteref {
-  text-decoration: none;
+a.noteref { text-decoration: none; }
+
+code {
+    font-family: "Courier";
+    font-size:   small;
 }
 CSS
 
