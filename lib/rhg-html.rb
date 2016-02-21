@@ -41,8 +41,8 @@ index.scan(%r[<li><a href="(.*?)">(.*?)</a>]) do |filename, title|
   html.gsub!(%r[<h3>(.*?)</h3>], '<h4>\1</h4>')
   html.gsub!(%r[<h2>(.*?)</h2>], '<h3>\1</h3>')
 
-  # Comment out line number in code
   html.gsub!(%r[<pre class="longlist">.+?</pre>]m) do |code|
+    # Comment out line number in code
     has_line_num = false
     line_num_len = 0
     code.split("\n").each do |line|
@@ -52,7 +52,6 @@ index.scan(%r[<li><a href="(.*?)">(.*?)</a>]) do |filename, title|
         lnum
       end
     end
-
     if has_line_num
       code.gsub!(%r[^( |\d){3}\d]) do |lnum|
         "/*%0#{line_num_len}s*/" % lnum.strip
@@ -62,11 +61,11 @@ index.scan(%r[<li><a href="(.*?)">(.*?)</a>]) do |filename, title|
       end
     end
 
+    # Comment out source file
+    code.gsub!(%r[^\((\w+?\.[chys])\)], '/* \1 */')
+
     code
   end
-
-  # Source file
-  html.gsub!(%r[^\((\w+?\.[chys])\)], '/* \1 */')
 
   # Code tags
   html.gsub!(%r[<pre.*>], '\0<code>')
