@@ -38,7 +38,7 @@ npm install > /dev/null 2>&1
 
 echo 'Extract Ruby Hacking Guide'
 
-tmpdir=$(mktemp -d "/tmp/rhg-epub.xxxxxx")
+tmpdir=$(mktemp -d "/tmp/rhg-epub.XXXXXX")
 trap "rm -rf ${tmpdir}" exit
 
 # Debug
