@@ -9,6 +9,7 @@
 * コードを等幅フォントで表示
 * highlight.jsでコードハイライト
 * コードの行番号をコメントアウト
+* ソースファイル名をコメントアウト
 
 他にも多少修正してあります。
 
@@ -18,12 +19,15 @@
 
 * pandoc
     * HTMLをEPUB3に変換します
-* node
-    * コードハイライトに使います
+* node.js
+    * rhg-epub.shスクリプトはnpmを使ってcoffee-scriptとjsdomをローカルにインストールします
+    * lib/rhg-highlight.coffeeはコードをハイライトします
 * ruby
-    * HTML, CSSを修正します
+    * lib/rhg-html.rbはHTMLを修正します
+    * lib/rhg-css.rbはCSSを修正します
 * curl
-    * HTML版のアーカイブやJavaScriptなどをダウンロードします
+    * rhg-epub.shスクリプトはHTML版のアーカイブをダウンロードします
+    * rhg-epub.shスクリプトはhighlight.jsとjQueryをダウンロードします
 * unzip
     * epubファイルを展開します
 * zip
