@@ -7,6 +7,8 @@ RHG_ROOT='RubyHackingGuide-20040721'
 
 tarball="${RHG_URI##*\/}"
 script_root="${PWD}"
+asset_dir="${script_root}/asset"
+lib_dir="${script_root}/lib"
 
 
 if [[ ! -f ${tarball} ]]; then
@@ -14,13 +16,34 @@ if [[ ! -f ${tarball} ]]; then
   curl -o "${tarball}" "${RHG_URI}"
 fi
 
+mkdir -p "${asset_dir}"
+
+if [[ ! -f "${asset_dir}/jquery.min.js" ]]; then
+  echo 'Download jquery'
+  curl --output "${asset_dir}/jquery.min.js" "http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"
+fi
+
+if [[ ! -f "${asset_dir}/highlight.min.js" ]]; then
+  echo 'Download highlight.js'
+  curl --output "${asset_dir}/highlight.min.js" "http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"
+fi
+
+if [[ ! -f "${asset_dir}/tomorrow.min.css" ]]; then
+  echo 'Download highlight.js theme'
+  curl --output "${asset_dir}/tomorrow.min.css" "http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/tomorrow.min.css"
+fi
+
+echo 'npm install'
+npm install > /dev/null 2>&1
+
 echo 'Extract Ruby Hacking Guide'
 
 tmpdir=$(mktemp -d "/tmp/rhg-epub.xxxxxx")
 trap "rm -rf ${tmpdir}" exit
 
 # Debug
-#tmpdir='tmp'
+#tmpdir="${script_root}/tmp"
+#mkdir -p "${tmpdir}"
 
 tar zxf "${tarball}" -C "${tmpdir}"
 
@@ -30,12 +53,13 @@ cd "${tmpdir}/${RHG_ROOT}"
 
 echo 'Compile all HTML'
 
-"${script_root}/rhg-html.rb" index.html > RubyHackingGuide.html
+"${lib_dir}/rhg-html.rb" index.html > RubyHackingGuide.html
 
 
 echo 'Adjust stylesheet'
 
-"${script_root}/rhg-css.rb" rhg.css > rhg-epub.css
+"${lib_dir}/rhg-css.rb" rhg.css > rhg-epub.css
+cat "${asset_dir}/tomorrow.min.css" >> rhg-epub.css
 
 
 echo 'Convert to EPUB'
@@ -45,17 +69,24 @@ pandoc -f html -t epub3 --epub-stylesheet rhg-epub.css -o '../tmp.epub' RubyHack
 
 echo 'Expand EPUB'
 
-cd "${script_root}"
 mkdir -p "${tmpdir}/epub"
 cd "${tmpdir}/epub"
-unzip '../tmp.epub' > /dev/null
+unzip -o '../tmp.epub' > /dev/null
 
+
+echo 'Highlight code'
+
+for xhtml in ch*.xhtml; do
+  mv "${xhtml}" "${xhtml}.orig"
+  "${script_root}/node_modules/coffee-script/bin/coffee" "${lib_dir}/rhg-highlight.coffee" "${asset_dir}" "${xhtml}.orig" > "${xhtml}"
+  rm "${xhtml}.orig"
+done
 
 echo 'Convert footnote'
 
 for xhtml in ch*.xhtml; do
   mv "${xhtml}" "${xhtml}.orig"
-  "${script_root}/rhg-footnote.rb" "${xhtml}.orig" > "${xhtml}"
+  "${lib_dir}/rhg-footnote.rb" "${xhtml}.orig" > "${xhtml}"
   rm "${xhtml}.orig"
 done
 

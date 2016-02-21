@@ -47,6 +47,13 @@ code {
     font-family: "Courier";
     font-size:   small;
 }
+
+h1 > code { font-size: 100%; }
+h3 > code { font-size: 100%; }
+h4 > code { font-size: 100%; }
+h5 > code { font-size: 100%; }
+
+pre.longlist > code.hljs { background-color: #eee; }
 CSS
 
 puts(stylesheet)

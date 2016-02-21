@@ -2,16 +2,27 @@
 
 [『Rubyソースコード完全解説』](http://i.loveruby.net/ja/rhg/book/)のHTML版をEPUB3形式に変換します。
 
-iBooksで目次と脚注が正しく表示されるようにしました。
-また、iOSのiBooksで等幅フォントが正しく表示されるようにしました。
+以下の点を改善してみました：
+
+* 目次の表示
+* 脚注をポップアップ
+* コードを等幅フォントで表示
+* highlight.jsでコードハイライト
+
 他にも多少修正してあります。
+
+動作確認は、Mac OS XとiOSのiBooksのみで行なっています。
 
 ## 必要なもの
 
-* curl
-    * HTMLのアーカイブをダウンロードします
 * pandoc
     * HTMLをEPUB3に変換します
+* node
+    * コードハイライトに使います
+* ruby
+    * HTML, CSSを修正します
+* curl
+    * HTML版のアーカイブやJavaScriptなどをダウンロードします
 * unzip
     * epubファイルを展開します
 * zip

@@ -44,6 +44,7 @@ index.scan(%r[<li><a href="(.*?)">(.*?)</a>]) do |filename, title|
   # Code tags
   html.gsub!(%r[<pre.*>], '\0<code>')
   html.gsub!(%r[</pre>], '</code>\0')
+  html.gsub!(%r[^\((\w+?\.[chys])\)], '/* \1 */')
 
   # Fix table tags
   html.gsub!(%r[<td>(?!<td>)(.*?)(<td>)], '<td>\1</td>')
