@@ -9,13 +9,43 @@ all_html = <<HTML
 <title>Rubyソースコード完全解説</title>
 </head>
 <body>
-
-<h1 class="chapter">まえがき</h1>
 HTML
 
 index = File.open(ARGV[0], 'r:iso-2022-jp:UTF-8') { |io| io.read }
+original = index.clone
 
-index.scan(%r[<li><a href="(.*?)">(.*?)</a>]) do |filename, title|
+# Header
+index.sub!(%r[^.*?<h1>]m, '<h1 class="chapter">')
+
+# Shift header
+index.gsub!(%r[<h3>(.*?)</h3>]m, '<h4>\1</h4>')
+index.gsub!(%r[<h2>(.*?)</h2>]m, '<h3>\1</h3>')
+
+# Dead link
+index.sub!(%r[<p>\s*<a href.*?>.*?</a>\s*</p>]m, '')
+index.gsub!(%r[<li><a href.*?>(.*?)</a></li>]m, '<li>\1</li>')
+
+# Delete Hearline
+index.sub!(%r[<hr>], '')
+
+# Footer
+#index.sub!(%r[</body>.*]m, '')
+
+# Sections
+index.scan(%r[(<h1 class="chapter">.*?)<h3>]m) do |section, next_section|
+  all_html << section
+end
+# Push licence section
+index.scan(%r[</h3>.*?(<h3>.*?)</body>]m) do |section, next_section|
+  all_html << section
+end
+index.scan(%r[(<h3>.*?</h3>.*?)<h3>]m) do |section, next_section|
+  all_html << section
+end
+
+#all_html << index
+
+original.scan(%r[<li><a href="(.*?)">(.*?)</a></li>]) do |filename, title|
   html = File.open(filename, 'r:iso-2022-jp:UTF-8', undef: :replace, :replace => '?') { |io| io.read }
 
   case filename
@@ -31,9 +61,10 @@ index.scan(%r[<li><a href="(.*?)">(.*?)</a>]) do |filename, title|
 
   # Header
   if filename == 'preface.html'
-    html.sub!(%r[^.+?<body>]m, '')
+    html.sub!(%r[^.*?<body>]m, '')
+    html.sub!(%r[^<h2>(.*?)</h2>]m, '<h1 class="chapter">\1</h1>')
   else
-    html.sub!(%r[^.+?<h1>]m, '<h1 class="chapter">')
+    html.sub!(%r[^.*?<h1>]m, '<h1 class="chapter">')
   end
 
   # Shift header tags
@@ -41,7 +72,7 @@ index.scan(%r[<li><a href="(.*?)">(.*?)</a>]) do |filename, title|
   html.gsub!(%r[<h3>(.*?)</h3>], '<h4>\1</h4>')
   html.gsub!(%r[<h2>(.*?)</h2>], '<h3>\1</h3>')
 
-  html.gsub!(%r[<pre class="longlist">.+?</pre>]m) do |code|
+  html.gsub!(%r[<pre class="longlist">(.*?)</pre>]m) do |code|
     # Comment out line number in code
     has_line_num = false
     line_num_len = 0
@@ -68,11 +99,12 @@ index.scan(%r[<li><a href="(.*?)">(.*?)</a>]) do |filename, title|
   end
 
   # Code tags
-  html.gsub!(%r[<pre.*>], '\0<code>')
+  html.gsub!(%r[<pre.*?>], '\0<code>')
   html.gsub!(%r[</pre>], '</code>\0')
 
   # Fix table tags
-  html.gsub!(%r[<td>(?!<td>)(.*?)(<td>)], '<td>\1</td>')
+  #html.gsub!(%r[<td>(?!<td>)(.*?)(<td>)], '<td>\1</td>')
+  html.gsub!(%r[<td>(.*?)(<td>)], '<td>\1</td>')
   html.gsub!(%r[<td><td>], '<td></td>')
 
   # Convert table to description list
@@ -82,9 +114,15 @@ index.scan(%r[<li><a href="(.*?)">(.*?)</a>]) do |filename, title|
     html.gsub!(%r[</table>\s*(<h\d>.*?</h\d>)]m, '</dl>\1')
   end
 
+  # Fix paragraph tag
+  if filename == 'preface.html'
+    html.sub!(%r[^<p class="right"$], '<p class="right">')
+  end
+
+
   # Fix the line 1520 of module.html
   if filename == 'module.html'
-    html.sub!(%r[U牙.*?S頏著]){'U牙..S頏著'}
+    html.sub!(%r[U牙.*?S頏著], 'U牙..S頏著')
   end
 
   # Footer
@@ -92,32 +130,6 @@ index.scan(%r[<li><a href="(.*?)">(.*?)</a>]) do |filename, title|
 
   all_html << html
 end
-
-#
-# Postscript
-#
-
-all_html << '<h1 class="chapter">あとがき</h1>'
-
-# Header
-index.sub!(%r[^.+?</h1>]m, '')
-
-# ID
-index.sub!(%r[<p>\s*\$Id: index.html.*\$\s*</p>], '')
-
-# Skip index and shift header
-index.sub!(%r[<h2>目次</h2>.+?<h2>ライセンスなど</h2>]m, '<h3>ライセンスなど</h3>')
-
-# Hearline
-index.sub!(%r[<hr>], '')
-
-# Dead link
-index.sub!(%r[<p>\s*<a href.+?</a>\s*</p>]m, '')
-
-# Footer
-index.sub!(%r[</body>.*]m, '')
-
-all_html << index
 
 all_html << '</body></html>'
 
