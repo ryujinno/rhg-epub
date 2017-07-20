@@ -2,6 +2,7 @@ RubyHackingGuide.tar.gz
 RubyHackingGuide.epub
 RubyHackingGuide-20040721/
 cover.jpg
+package-lock.json
 asset/
 node_modules/
 .DS_Store

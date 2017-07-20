@@ -1,7 +1,9 @@
 asset_dir  = process.argv[2]
 xhtml_file = process.argv[3]
 
-require('jsdom').env
+jsdom = require('jsdom/lib/old-api.js')
+
+jsdom.env
   file: xhtml_file
   scripts: [
     "#{asset_dir}/jquery.min.js",
