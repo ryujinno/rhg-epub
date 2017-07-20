@@ -44,7 +44,7 @@ download_assets() {
 
 install_npm_packages() {
     echo 'Install npm packages'
-    npm install > /dev/null 2>&1
+    npm update > /dev/null 2>&1
 }
 
 unpack_rhg() {
